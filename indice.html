@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GastroVolt - Monitoreo Energético</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<div id="publicScreen">
+  <nav class="public-nav"><div class="brand">⚡ GastroVolt</div></nav>
+  <section class="public-hero">
+    <div class="hero-copy">
+      <h1>Controla tu energía. <span style="color:#54d982">Reduce tus gastos.</span></h1>
+      <p>Monitorea el consumo eléctrico de los equipos de tu restaurante, calcula costos estimados y consulta reportes mensuales desde un solo lugar.</p>
+      <button class="primary" id="heroRegisterBtn"><i class="fa-solid fa-user-plus"></i> Crear cuenta gratis</button>
+    </div>
+    <div class="preview-window" aria-label="Vista previa ilustrativa">
+      <h3><i class="fa-solid fa-chart-pie" style="color:#1fb655"></i> Vista previa del panel</h3>
+      <div class="preview-cards">
+        <div class="preview-card"><i class="fa-solid fa-bolt"></i><strong>248,60 kWh</strong><span>Consumo de ejemplo</span></div>
+        <div class="preview-card"><i class="fa-solid fa-plug"></i><strong>4 equipos</strong><span>Datos ilustrativos</span></div>
+        <div class="preview-card"><i class="fa-solid fa-money-bill-wave"></i><strong>Bs 497,20</strong><span>Costo de ejemplo</span></div>
+        <div class="preview-card"><i class="fa-solid fa-chart-line"></i><strong>−8,4 %</strong><span>Variación ilustrativa</span></div>
+      </div>
+      <div class="preview-bars"><strong>Consumo ilustrativo por equipo</strong><div class="preview-bar"><span style="width:82%"></span></div><div class="preview-bar"><span style="width:57%"></span></div><div class="preview-bar"><span style="width:34%"></span></div></div>
+    </div>
+  </section>
+  <section class="public-features">
+    <article class="feature"><i class="fa-solid fa-stopwatch"></i><h3>Tiempo de uso</h3><p>Registra el tiempo real de funcionamiento de cada equipo con un cronómetro.</p></article>
+    <article class="feature"><i class="fa-solid fa-chart-column"></i><h3>Reportes claros</h3><p>Consulta consumos, costos estimados y equipos que más energía utilizan.</p></article>
+    <article class="feature"><i class="fa-solid fa-file-excel"></i><h3>Exportación de datos</h3><p>Descarga los registros de tu cuenta en una hoja de cálculo compatible con Excel.</p></article>
+  </section>
+</div>
+
+<div id="loginScreen" class="hidden">
+  <div class="login-box">
+    <div class="logo-big">⚡ GastroVolt</div><p>Monitoreo Energético para Restaurantes</p><h2 id="authTitle">Crear cuenta</h2>
+    <form id="registerForm">
+      <div class="form-group"><input id="regNombre" type="text" placeholder="Nombre completo" autocomplete="name" required></div>
+      <div class="form-group"><input id="regRestaurante" type="text" placeholder="Nombre del restaurante" required></div>
+      <div class="form-group"><input id="regEmail" type="email" placeholder="Correo electrónico" autocomplete="email" required></div>
+      <div class="form-group password-wrap"><input id="regPassword" type="password" placeholder="Contraseña" autocomplete="new-password" required minlength="4"><button class="eye-btn" id="togglePassword" type="button" aria-label="Mostrar contraseña"><i class="fa-solid fa-eye"></i></button></div>
+      <button class="primary full" type="submit">Crear cuenta y entrar</button>
+      <button class="full" id="showLoginBtn" type="button" style="border:0;background:transparent;color:#159246;padding:8px">Ya tengo cuenta: iniciar sesión</button>
+      <div id="loginFields" class="hidden"><div class="form-group"><input id="loginEmail" type="email" placeholder="Correo electrónico" autocomplete="username"></div><div class="form-group password-wrap"><input id="loginPassword" type="password" placeholder="Contraseña" autocomplete="current-password"><button class="eye-btn" id="toggleLoginPassword" type="button" aria-label="Mostrar contraseña"><i class="fa-solid fa-eye"></i></button></div><button class="primary full" id="loginBtn" type="button">Iniciar sesión</button></div>
+      <button class="full" id="cancelRegisterBtn" type="button" style="border:0;background:transparent;color:#52606d;padding:12px">Volver a la vista previa</button>
+    </form>
+  </div>
+</div>
+
+<div id="dashboard" class="hidden">
+  <aside class="sidebar">
+    <div class="brand">⚡ GastroVolt</div>
+    <button class="nav-btn active" data-section="inicio"><i class="fa-solid fa-house"></i> Inicio</button>
+    <button class="nav-btn" data-section="equipos"><i class="fa-solid fa-plug"></i> Equipos</button>
+    <button class="nav-btn" data-section="consumo"><i class="fa-solid fa-chart-line"></i> Consumo</button>
+    <button class="nav-btn" data-section="reportes"><i class="fa-solid fa-file-lines"></i> Reportes</button>
+    <button class="nav-btn" data-section="alertas"><i class="fa-solid fa-triangle-exclamation"></i> Alertas</button>
+    <button class="nav-btn" data-section="configuracion"><i class="fa-solid fa-gear"></i> Configuración</button>
+    <button class="nav-btn account-btn" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</button>
+  </aside>
+  <main class="main">
+    <section id="inicio" class="section active"><div class="topbar"><div><h1>Panel principal</h1><p class="muted">Bienvenido a GastroVolt, <span id="welcomeName"></span>.</p></div></div>
+      <div class="cards"><div class="card"><i class="fa-solid fa-bolt"></i><h2 id="totalConsumo">0 kWh</h2><p class="muted">Consumo calculado</p></div><div class="card"><i class="fa-solid fa-plug"></i><h2 id="cantidadEquipos">0</h2><p class="muted">Equipos registrados</p></div><div class="card"><i class="fa-solid fa-money-bill-wave"></i><h2 id="costoTotal">Bs 0,00</h2><p class="muted">Costo estimado</p></div><div class="card"><i class="fa-solid fa-stopwatch"></i><h2 id="tiempoTotal">00:00:00</h2><p class="muted">Tiempo registrado hoy</p></div></div>
+      <div class="panel"><h2>Resumen energético</h2><div id="resumenInicio" class="notice info">Registra tus equipos para comenzar a obtener información.</div></div>
+    </section>
+    <section id="equipos" class="section"><div class="topbar"><div><h1>Equipos eléctricos</h1><p class="muted">Registra la potencia y mide el tiempo real de uso de cada equipo.</p></div><button class="primary" id="addEquipoBtn"><i class="fa-solid fa-plus"></i> Agregar equipo</button></div>
+      <div class="panel"><div class="table-wrap"><table><thead><tr><th>Equipo</th><th>Potencia</th><th>Cronómetro de uso</th><th>Consumo acumulado</th><th>Costo acumulado</th><th>Estado</th><th>Acción</th></tr></thead><tbody id="equiposTable"></tbody></table></div><p class="muted" style="font-size:.85rem;margin-top:12px">Fórmula: consumo (kWh) = potencia (W) × tiempo (horas) ÷ 1000. Costo (Bs) = consumo (kWh) × tarifa del equipo (Bs/kWh). El cronómetro continúa contando aunque cambies de pestaña.</p></div>
+    </section>
+    <section id="consumo" class="section"><div class="topbar"><div><h1>Consumo energético</h1><p class="muted">Consulta el consumo acumulado de los cronómetros y la energía registrada durante el mes actual.</p></div></div><div class="grid-2"><div class="panel"><h2>Consumo acumulado de equipos</h2><h1 id="consumoTotalSection">0 kWh</h1><p class="muted">Suma del tiempo acumulado en los cronómetros que están registrados actualmente.</p></div><div class="panel"><h2>Equipo de mayor consumo</h2><h2 id="mayorEquipo">Sin datos</h2><p class="muted" id="mayorEquipoDetalle">Registra equipos.</p></div></div><div class="panel"><h2>Consumo por equipo</h2><p class="muted">Cada porcentaje indica qué parte representa el consumo de ese equipo respecto al total acumulado.</p><div id="participacion"></div></div><div class="panel"><h2>Consumo del mes actual</h2><h1 id="consumoMesSection">0 kWh</h1><p class="muted" id="consumoMesEtiqueta"></p></div></section>
+    <section id="reportes" class="section"><div class="topbar"><div><h1>Reportes</h1><p class="muted">Resumen de los consumos registrados.</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="primary" id="exportExcelBtn"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button><button class="primary" id="downloadPdfBtn"><i class="fa-solid fa-file-pdf"></i> Guardar PDF</button></div></div>
+      <div class="panel"><div class="report-header"><div><h2 id="reportePeriodo">Reporte mensual</h2><p class="muted" id="reportePeriodoDetalle">Mes actual</p></div><span class="badge green">Periodo mensual</span></div><div class="report-cards"><div class="report-stat"><span>Equipos registrados</span><strong id="repEquipos">0</strong></div><div class="report-stat"><span>Consumo del mes</span><strong id="repActual">0 kWh</strong></div><div class="report-stat"><span>Costo estimado del mes</span><strong id="repCosto">Bs 0,00</strong></div></div></div>
+      <div class="panel"><h2>Comparación mensual de consumo</h2><p class="muted">Compara el consumo registrado en el mes actual con el mes anterior. La altura de cada barra es proporcional al valor en kWh.</p><div id="comparacionMensual" class="compare" role="img" aria-label="Gráfica de barras comparativa del consumo mensual"></div></div>
+      <div class="panel"><h2>Detalle por equipo</h2><div id="detalleReporte" class="table-wrap"></div></div>
+    </section>
+    <section id="alertas" class="section"><div class="topbar"><div><h1>Alertas</h1><p class="muted">Avisos orientativos sobre el consumo registrado.</p></div></div><div id="alertasBox"></div></section>
+    <section id="configuracion" class="section">
+      <div class="topbar"><div><h1>Configuración</h1><p class="muted">Administra los datos del restaurante y consulta la información de tu cuenta.</p></div></div>
+      <div class="grid-2">
+        <div class="panel"><h2>Datos del restaurante</h2><label class="config-label" for="configRestaurante">Nombre del restaurante</label><div class="form-group"><input id="configRestaurante" type="text" maxlength="100"></div><button class="primary" id="saveConfig">Guardar cambios</button><div id="configMsg" aria-live="polite"></div></div>
+        <div class="panel"><h2>Datos de la cuenta</h2><p style="margin-top:10px"><strong>Nombre:</strong> <span id="userInfoNombre"></span></p><p style="margin-top:10px"><strong>Correo:</strong> <span id="userInfoEmail"></span></p><p style="margin-top:10px"><strong>Restaurante:</strong> <span id="userInfoRestaurante"></span></p><p style="margin-top:10px"><strong>Contraseña:</strong> <span id="userInfoPassword" aria-label="Contraseña protegida">••••••••</span></p><p class="muted" style="font-size:.82rem;margin-top:12px">La contraseña se muestra oculta. Este sistema guarda los datos en el almacenamiento local del navegador; no equivale a una base de datos segura en un servidor.</p></div>
+      </div>
+      <div class="panel"><h2>Almacenamiento local</h2><p class="muted">Estos son los registros que GastroVolt conserva en este navegador.</p><div id="storageInfo" class="notice info" aria-live="polite"></div><details style="margin-top:14px"><summary style="cursor:pointer;font-weight:700">Ver datos guardados en este navegador</summary><pre id="storageData" style="white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f7fb;padding:12px;border-radius:10px;margin-top:10px;font-size:.8rem;max-height:360px;overflow:auto"></pre></details><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button class="primary" id="backupBtn" type="button">Descargar copia de seguridad</button><button class="primary" id="refreshStorageBtn" type="button">Actualizar información</button></div></div>
+    </section>
+  </main>
+</div>
+
+<div class="modal" id="equipoModal"><div class="modal-card"><div class="modal-head"><h2>Agregar equipo</h2><button class="close-btn" id="closeModal" type="button" aria-label="Cerrar">×</button></div><form id="equipoForm"><label for="eqNombre">Nombre del equipo</label><input id="eqNombre" type="text" required><label for="eqPotencia">Potencia (W)</label><input id="eqPotencia" type="number" min="0.01" step="0.01" required><label for="eqTarifa">Tarifa de consumo (Bs/kWh)</label><input id="eqTarifa" type="number" min="0" step="0.01" required><p class="muted" style="font-size:.85rem">El tiempo de uso se medirá con el cronómetro de la tabla.</p><button class="primary full" type="submit">Guardar equipo</button></form></div></div>
+
+<script src="script.js"></script>
+</body>
+</html>
